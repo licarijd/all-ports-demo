@@ -29,6 +29,11 @@ import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.Marker;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks,
@@ -170,6 +175,47 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 Toast.makeText(MapsActivity.this,"Nearby Schools", Toast.LENGTH_LONG).show();
             }
         });
+
+
+
+        // Get a reference to our posts
+        final FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference ref = database.getReference("users/JFPThDMQWYW1MGwaLb5JP9dZNDD3/maps/markers/-LHTwe-08f_qQitxhzch");
+
+        // Attach a listener to read the data at our posts reference
+        ref.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                String data = dataSnapshot.getValue().toString();
+                parseData(data);
+                //System.out.println("data: " + data);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                System.out.println("The read failed: " + databaseError.getCode());
+            }
+        });
+
+    }
+
+    private String parseData(String data){
+        System.out.println("data: " + data);
+
+        String s1 = data.substring(data.indexOf("u")+1);
+        String s2 = s1.substring(9);
+        String[] points = s2.split("#");
+        String[][] points2 = new String[points.length][2];
+
+        for (int i=0;i<points.length;i++){
+            points2[i]=points[i].split(",");
+            String x = points2[i][0].replace("(", "");
+            x = x.replace(")", "");
+            String y = points2[i][1].replace("(", "");
+            y = y.replace(")", "");
+            System.out.println("x: " + x + " y: " + y);
+        }
+        return data;
     }
 
     protected synchronized void buildGoogleApiClient() {
@@ -317,3 +363,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 }
+
+
+
