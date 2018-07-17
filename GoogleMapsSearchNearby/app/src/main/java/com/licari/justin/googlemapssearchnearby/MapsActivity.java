@@ -2,6 +2,9 @@ package com.licari.justin.googlemapssearchnearby;
 
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+
+import com.bumptech.glide.Glide;
+import com.firebase.ui.storage.images.FirebaseImageLoader;
 import com.google.android.gms.location.LocationListener;
 
 import com.google.android.gms.location.LocationRequest;
@@ -22,6 +25,7 @@ import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -36,6 +40,10 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.database.Query;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+
+import java.util.UUID;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback,
         GoogleMap.OnMarkerClickListener,
@@ -48,6 +56,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public static String pointTypes;
     public static String pointCoordinates;
     public static LatLng[] airportPlaces;
+
+    //Firebase
+    FirebaseStorage storage;
+    StorageReference storageReference;
 
     private GoogleMap mMap;
     double latitude;
@@ -383,6 +395,20 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
 
             }
+
+            // Reference to an image file in Firebase Storage
+           // storage = FirebaseStorage.getInstance();
+            //storageReference = storage.getReference();
+            //StorageReference ref = storageReference.child("gs://all-ports-9f7f8.appspot.com/0.png");
+
+            // ImageView in your Activity
+            //ImageView imageView = findViewById(R.id.photo);
+
+            // Load the image using Glide
+            /*Glide.with(this)
+                    .using(new FirebaseImageLoader())
+                    .load(ref)
+                    .into(imageView);*/
         }
     }
 
