@@ -354,9 +354,35 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             y = y.replace(")", "");
             System.out.println("x: " + x + " y: " + y);
 
-            airportPlaces[i] = new LatLng(Double.parseDouble(x), Double.parseDouble(y));
-            mMap.addMarker(new MarkerOptions().position(airportPlaces[i])
-                    .title(names[i]));
+            if (types[i]=="washroom") {
+                airportPlaces[i] = new LatLng(Double.parseDouble(x), Double.parseDouble(y));
+                mMap.addMarker(new MarkerOptions().position(airportPlaces[i])
+                        .title(names[i])
+                        .snippet(descriptions[i])
+                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA)));
+
+            } else if (types[i]=="food & drink") {
+                airportPlaces[i] = new LatLng(Double.parseDouble(x), Double.parseDouble(y));
+                mMap.addMarker(new MarkerOptions().position(airportPlaces[i])
+                        .title(names[i])
+                        .snippet(descriptions[i])
+                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)));
+
+            } else if (types[i]=="shops") {
+                airportPlaces[i] = new LatLng(Double.parseDouble(x), Double.parseDouble(y));
+                mMap.addMarker(new MarkerOptions().position(airportPlaces[i])
+                        .title(names[i])
+                        .snippet(descriptions[i])
+                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW)));
+
+            } else if (types[i]=="escalators") {
+                airportPlaces[i] = new LatLng(Double.parseDouble(x), Double.parseDouble(y));
+                mMap.addMarker(new MarkerOptions().position(airportPlaces[i])
+                        .title(names[i])
+                        .snippet(descriptions[i])
+                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
+
+            }
         }
     }
 
