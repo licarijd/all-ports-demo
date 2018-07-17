@@ -29,16 +29,25 @@ import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.Marker;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.database.Query;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback,
+        GoogleMap.OnMarkerClickListener,
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
         LocationListener {
+
+    public static String pointNames;
+    public static String pointDescriptions;
+    public static String pointTypes;
+    public static String pointCoordinates;
+    public static LatLng[] airportPlaces;
 
     private GoogleMap mMap;
     double latitude;
@@ -176,8 +185,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         });
 
-
-
         // Get a reference to our posts
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference ref = database.getReference("users/JFPThDMQWYW1MGwaLb5JP9dZNDD3/maps/markers/-LHTwe-08f_qQitxhzch");
@@ -187,8 +194,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 String data = dataSnapshot.getValue().toString();
-                parseData(data);
-                //System.out.println("data: " + data);
+                setPointCoordinates(data);
+                System.out.println("data: " + data);
             }
 
             @Override
@@ -197,15 +204,147 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         });
 
+
+        ref = database.getReference("users/JFPThDMQWYW1MGwaLb5JP9dZNDD3/maps/");
+
+        Query placeNameQuery = ref.child("markerNameData").orderByValue();
+        placeNameQuery.addValueEventListener(new ValueEventListener() {
+
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                String data = dataSnapshot.getValue().toString();
+                setPointNames(data);
+                //System.out.println("names: " + data);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                System.out.println("The read failed: " + databaseError.getCode());
+            }
+        });
+
+        Query placeDescriptionQuery = ref.child("markerNotesData").orderByValue();
+        placeDescriptionQuery.addValueEventListener(new ValueEventListener() {
+
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                String data = dataSnapshot.getValue().toString();
+                setPointDescriptions(data);
+                //System.out.println("descriptions: " + data);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                System.out.println("The read failed: " + databaseError.getCode());
+            }
+        });
+
+        Query placeTypeQuery = ref.child("markerDescriptionData").orderByValue();
+        placeTypeQuery.addValueEventListener(new ValueEventListener() {
+
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                String data = dataSnapshot.getValue().toString();
+                setPointTypes(data);
+                //System.out.println("types: " + data);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                System.out.println("The read failed: " + databaseError.getCode());
+            }
+        });
+
+       /* new java.util.Timer().schedule(
+                new java.util.TimerTask() {
+                    @Override
+                    public void run() {
+                        //setAirportData();
+                    }
+                },
+                3000
+        );*/
+
     }
 
-    private String parseData(String data){
-        System.out.println("data: " + data);
+    public void setPointCoordinates(String data){
+        pointCoordinates = data;
+        System.out.print("coordinates: " + pointCoordinates);
 
-        String s1 = data.substring(data.indexOf("u")+1);
+        if (pointDescriptions!=null && pointCoordinates!=null && pointNames!=null && pointTypes!=null){
+            setAirportData();
+            System.out.print("data set ");
+        }
+    }
+
+    public void setPointNames(String data){
+        pointNames = data;
+        System.out.print("names: " + pointNames);
+
+        if (pointDescriptions!=null && pointCoordinates!=null && pointNames!=null && pointTypes!=null){
+            setAirportData();
+            System.out.print("data set ");
+        }
+    }
+
+    public void setPointDescriptions(String data){
+        pointDescriptions = data;
+        System.out.print("descriptions: " + pointDescriptions);
+
+        if (pointDescriptions!=null && pointCoordinates!=null && pointNames!=null && pointTypes!=null){
+            setAirportData();
+            System.out.print("data set ");
+        }
+    }
+
+    public void setPointTypes(String data){
+        pointTypes = data;
+        System.out.print("types: " + pointTypes);
+
+        if (pointDescriptions!=null && pointCoordinates!=null && pointNames!=null && pointTypes!=null){
+            setAirportData();
+            System.out.print("data set ");
+        }
+    }
+
+    private void setAirportData(){
+
+
+        /*while(pointDescriptions==null || pointCoordinates==null || pointNames==null || pointTypes==null){
+            System.out.println("waiting for airport data...");
+        }*/
+
+        System.out.println("names: " + pointNames);
+        System.out.println("descriptions: " + pointDescriptions);
+        System.out.println("types: " + pointTypes);
+
+        String[] names = pointNames.split(",");
+        String[] descriptions = pointDescriptions.split(",");
+        String[] types = pointTypes.split(",");
+
+
+        for (int i=0;i<names.length;i++){
+            String name = names[i].substring(names[i].indexOf("="));
+            String description = descriptions[i].substring(descriptions[i].indexOf("="));
+            String type = types[i].substring(types[i].indexOf("="));
+
+            names[i] = name;
+            descriptions[i] = description;
+            types[i] = type;
+
+            System.out.println("name: " + names[i]);
+            System.out.println("description: " + descriptions[i]);
+            System.out.println("type: " + types[i]);
+        }
+
+        System.out.println("data: " + pointCoordinates);
+
+        String s1 = pointCoordinates.substring(pointCoordinates.indexOf("u")+1);
         String s2 = s1.substring(9);
         String[] points = s2.split("#");
         String[][] points2 = new String[points.length][2];
+        airportPlaces = new LatLng[names.length];
+        //LatLng[] airportPlaces = new LatLng[points.length];
 
         for (int i=0;i<points.length;i++){
             points2[i]=points[i].split(",");
@@ -214,9 +353,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             String y = points2[i][1].replace("(", "");
             y = y.replace(")", "");
             System.out.println("x: " + x + " y: " + y);
+
+            airportPlaces[i] = new LatLng(Double.parseDouble(x), Double.parseDouble(y));
+            mMap.addMarker(new MarkerOptions().position(airportPlaces[i])
+                    .title(names[i]));
         }
-        return data;
     }
+
 
     protected synchronized void buildGoogleApiClient() {
         mGoogleApiClient = new GoogleApiClient.Builder(this)
@@ -277,8 +420,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mCurrLocationMarker = mMap.addMarker(markerOptions);
 
         //move map camera
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-        mMap.animateCamera(CameraUpdateFactory.zoomTo(11));
+       // mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+        //mMap.animateCamera(CameraUpdateFactory.zoomTo(11));
         Toast.makeText(MapsActivity.this,"Your Current Location", Toast.LENGTH_LONG).show();
 
         Log.d("onLocationChanged", String.format("latitude:%.3f longitude:%.3f",latitude,longitude));
@@ -361,6 +504,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             // other 'case' lines to check for other permissions this app might request.
             // You can add here other case statements according to your requirement.
         }
+    }
+
+    @Override
+    public boolean onMarkerClick(final Marker marker) {
+
+        /*if (marker.equals(myMarker))
+        {
+            //handle click here
+        }*/
+        System.out.print(marker);
+        return true;
     }
 }
 
