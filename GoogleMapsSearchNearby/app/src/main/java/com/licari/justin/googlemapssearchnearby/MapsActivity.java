@@ -397,18 +397,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
 
             // Reference to an image file in Firebase Storage
-           // storage = FirebaseStorage.getInstance();
-            //storageReference = storage.getReference();
-            //StorageReference ref = storageReference.child("gs://all-ports-9f7f8.appspot.com/0.png");
+            storage = FirebaseStorage.getInstance();
+            storageReference = storage.getReference();
+            StorageReference ref = storageReference.child("/0.png");
 
             // ImageView in your Activity
-            //ImageView imageView = findViewById(R.id.photo);
+            ImageView imageView = findViewById(R.id.photo);
 
             // Load the image using Glide
-            /*Glide.with(this)
+            Glide.with(this)
                     .using(new FirebaseImageLoader())
                     .load(ref)
-                    .into(imageView);*/
+                    .into(imageView);
         }
     }
 

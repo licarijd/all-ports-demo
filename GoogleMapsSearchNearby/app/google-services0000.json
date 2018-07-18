@@ -23,14 +23,6 @@
           }
         },
         {
-          "client_id": "1070498137898-3opeb2vcvrnlpud072uak3ghmfd0o4ij.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.licari.justin.googlemapssearchnearby",
-            "certificate_hash": "9123003935c612a404ec7e6013a6e548b7244da3"
-          }
-        },
-        {
           "client_id": "1070498137898-bch9p81fphtffrrsdnf6od3t85ctf1ho.apps.googleusercontent.com",
           "client_type": 3
         }
