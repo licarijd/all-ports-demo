@@ -45,6 +45,8 @@ import com.google.firebase.database.Query;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import org.w3c.dom.Text;
+
 import java.util.UUID;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback,
@@ -586,11 +588,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }*/
         infoWindowContents.setDisplayedChild(infoWindowContents.indexOfChild(findViewById(R.id.placeDetails)));
 
-        infoWindowDescription = (TextView)findViewById(R.id.description);
-        infoWindowDescription.setText("My Awesome Text");
-
         infoWindowType = (TextView)findViewById(R.id.type);
-        infoWindowType.setText("My Awesome Text");
+        infoWindowType.setText("Type: " + "My Awesome Text");
+
+        infoWindowDescription = (TextView)findViewById(R.id.description);
+        infoWindowDescription.setText("\n" + "Description: " + "My Awesome Text ");
+
         System.out.print(marker);
         return true;
     }

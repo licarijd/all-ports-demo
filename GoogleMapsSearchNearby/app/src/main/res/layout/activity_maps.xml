@@ -34,7 +34,7 @@
                     android:id="@+id/placeDetails"
                     android:layout_width="match_parent"
                     android:layout_height="300px"
-                    android:orientation="vertical"
+                    android:orientation="horizontal"
                     android:background="@color/browser_actions_bg_grey">
 
                         <ImageView
@@ -42,28 +42,52 @@
                             android:layout_width="275px"
                             android:layout_height="275px" />
 
-                        <TextView
-                            android:id="@+id/description"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent" />
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
 
-                        <TextView
-                            android:id="@+id/type"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent" />
+                                <TextView
+                                    android:id="@+id/type"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content" />
+
+                                <TextView
+                                    android:id="@+id/description"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"/>
+                        </LinearLayout>
+
                 </LinearLayout>
 
                 <LinearLayout
                     android:id="@+id/legend"
                     android:layout_width="match_parent"
-                    android:layout_height="300px"
-                    android:orientation="vertical">
+                    android:layout_height="400px"
+                    android:orientation="horizontal"
+                    android:background="@color/browser_actions_bg_grey">
 
                         <ImageView
                             android:id="@+id/legend_img"
-                            android:layout_width="275px"
-                            android:layout_height="275px"
+                            android:layout_width="375px"
+                            android:layout_height="375px"
                             android:src="@drawable/legend"/>
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Each place in the airport is a pin on the map."/>
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Click on a pin to view details about the place!"/>
+                        </LinearLayout>
                 </LinearLayout>
 
                 <!--<Button
