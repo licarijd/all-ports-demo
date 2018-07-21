@@ -389,28 +389,28 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 airportPlaces[i] = new LatLng(Double.parseDouble(x), Double.parseDouble(y));
                 mMap.addMarker(new MarkerOptions().position(airportPlaces[i])
                         .title(names[i])
-                        .snippet(descriptions[i])
+                        .snippet(types[i] + "\n" + descriptions[i])
                         .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA)));
 
             } else if (types[i]=="food & drink") {
                 airportPlaces[i] = new LatLng(Double.parseDouble(x), Double.parseDouble(y));
                 mMap.addMarker(new MarkerOptions().position(airportPlaces[i])
                         .title(names[i])
-                        .snippet(descriptions[i])
+                        .snippet(types[i] + "\n" + descriptions[i])
                         .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)));
 
             } else if (types[i]=="shops") {
                 airportPlaces[i] = new LatLng(Double.parseDouble(x), Double.parseDouble(y));
                 mMap.addMarker(new MarkerOptions().position(airportPlaces[i])
                         .title(names[i])
-                        .snippet(descriptions[i])
+                        .snippet(types[i] + "\n" + descriptions[i])
                         .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW)));
 
             } else if (types[i]=="escalators") {
                 airportPlaces[i] = new LatLng(Double.parseDouble(x), Double.parseDouble(y));
                 mMap.addMarker(new MarkerOptions().position(airportPlaces[i])
                         .title(names[i])
-                        .snippet(descriptions[i])
+                        .snippet(types[i] + "\n" + descriptions[i])
                         .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
 
             }
@@ -588,13 +588,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }*/
         infoWindowContents.setDisplayedChild(infoWindowContents.indexOfChild(findViewById(R.id.placeDetails)));
 
-        infoWindowType = (TextView)findViewById(R.id.type);
+        marker.showInfoWindow();
+
+        /*infoWindowType = (TextView)findViewById(R.id.type);
         infoWindowType.setText("Type: " + "My Awesome Text");
 
         infoWindowDescription = (TextView)findViewById(R.id.description);
-        infoWindowDescription.setText("\n" + "Description: " + "My Awesome Text ");
+        infoWindowDescription.setText("\n" + "Description: " + "My Awesome Text ");*/
 
-        System.out.print(marker);
+        System.out.println(marker.getTitle() + "_" + marker.getId() + "_" + marker.getZIndex());
         return true;
     }
 }
