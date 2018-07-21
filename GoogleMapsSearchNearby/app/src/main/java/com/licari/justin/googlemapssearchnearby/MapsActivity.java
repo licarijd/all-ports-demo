@@ -26,7 +26,9 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ViewFlipper;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
@@ -70,6 +72,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     Marker mCurrLocationMarker;
     LocationRequest mLocationRequest;
 
+    ViewFlipper infoWindowContents;
+    TextView infoWindowDescription;
+    TextView infoWindowType;
+
+    private Marker myMarker;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -92,6 +100,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+        //Create info window with legend
+        infoWindowContents = (ViewFlipper) findViewById(R.id.infoWindow);
     }
 
     private boolean CheckGooglePlayServices() {
@@ -136,7 +147,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             mMap.setMyLocationEnabled(true);
         }
 
-        Button btnRestaurant = (Button) findViewById(R.id.btnRestaurant);
+        //Override default onclick method for markers
+        mMap.setOnMarkerClickListener(this);
+
+        /*Button btnRestaurant = (Button) findViewById(R.id.btnRestaurant);
         btnRestaurant.setOnClickListener(new View.OnClickListener() {
             String Restaurant = "restaurant";
             @Override
@@ -152,9 +166,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 getNearbyPlacesData.execute(DataTransfer);
                 Toast.makeText(MapsActivity.this,"Nearby Restaurants", Toast.LENGTH_LONG).show();
             }
-        });
+        });*/
 
-        Button btnHospital = (Button) findViewById(R.id.btnHospital);
+        /*Button btnHospital = (Button) findViewById(R.id.btnHospital);
         btnHospital.setOnClickListener(new View.OnClickListener() {
             String Hospital = "hospital";
             @Override
@@ -170,7 +184,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 getNearbyPlacesData.execute(DataTransfer);
                 Toast.makeText(MapsActivity.this,"Nearby Hospitals", Toast.LENGTH_LONG).show();
             }
-        });
+        });*/
 
         Button btnSchool = (Button) findViewById(R.id.btnSchool);
         btnSchool.setOnClickListener(new View.OnClickListener() {
@@ -196,6 +210,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 Toast.makeText(MapsActivity.this,"Nearby Schools", Toast.LENGTH_LONG).show();
             }
         });
+
+        //Display the legend by default
+        infoWindowContents.setDisplayedChild(infoWindowContents.indexOfChild(findViewById(R.id.legend)));
 
         // Get a reference to our posts
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -396,6 +413,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             }
 
+            //Load image from Firebase into our infoWindow
             // Reference to an image file in Firebase Storage
             storage = FirebaseStorage.getInstance();
             storageReference = storage.getReference();
@@ -558,6 +576,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
+    //Display place details when clicked
     @Override
     public boolean onMarkerClick(final Marker marker) {
 
@@ -565,6 +584,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         {
             //handle click here
         }*/
+        infoWindowContents.setDisplayedChild(infoWindowContents.indexOfChild(findViewById(R.id.placeDetails)));
+
+        infoWindowDescription = (TextView)findViewById(R.id.description);
+        infoWindowDescription.setText("My Awesome Text");
+
+        infoWindowType = (TextView)findViewById(R.id.type);
+        infoWindowType.setText("My Awesome Text");
         System.out.print(marker);
         return true;
     }
