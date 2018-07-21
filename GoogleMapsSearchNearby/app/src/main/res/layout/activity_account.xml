@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <FrameLayout xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        xmlns:android="http://schemas.android.com/apk/res/android">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:text="Scane this barcode when you make purchases at this airport to get AllPoints as you shop. AllPoints can be redeemed to get discounts on purchases and help you save!"/>
+
+            <ImageView
+                android:id="@+id/barCode"
+                android:layout_width="400px"
+                android:layout_height="400px"
+                android:layout_gravity="center_horizontal"
+                android:src="@drawable/sample_barcode"/>
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:text="AllPoints: 3147"/>
+
+            <Button
+                android:id="@+id/btnMap"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Find Shops, Restaurants, Washrooms and More!" />
+
+        </LinearLayout>
+
+    </FrameLayout>
+
+</android.support.constraint.ConstraintLayout>

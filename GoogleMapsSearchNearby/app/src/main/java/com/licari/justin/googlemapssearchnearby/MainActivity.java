@@ -61,7 +61,7 @@ public class MainActivity extends FragmentActivity {
                 // Successfully signed in
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
-                Intent myIntent = new Intent(this, MapsActivity.class);
+                Intent myIntent = new Intent(this, AccountActivity.class);
                 startActivity(myIntent);
             } else {
                 // Sign in failed. If response is null the user canceled the

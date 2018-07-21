@@ -1,5 +1,6 @@
 package com.licari.justin.googlemapssearchnearby;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 
@@ -213,12 +214,20 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         });
 
+        Button btnAccount = (Button) findViewById(R.id.btnAccount);
+        btnAccount.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                switchToAccountPage();
+            }
+        });
+
         //Display the legend by default
         infoWindowContents.setDisplayedChild(infoWindowContents.indexOfChild(findViewById(R.id.legend)));
 
-        // Get a reference to our posts
+        // Get a reference to the airport's maps
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference ref = database.getReference("users/JFPThDMQWYW1MGwaLb5JP9dZNDD3/maps/markers/-LHTwe-08f_qQitxhzch");
+        DatabaseReference ref = database.getReference("airports/" + GlobalData.airport + "/maps/markers/");
 
         // Attach a listener to read the data at our posts reference
         ref.addValueEventListener(new ValueEventListener() {
@@ -236,7 +245,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         });
 
 
-        ref = database.getReference("users/JFPThDMQWYW1MGwaLb5JP9dZNDD3/maps/");
+        ref = database.getReference("airports/" + GlobalData.airport + "/maps/");
 
         Query placeNameQuery = ref.child("markerNameData").orderByValue();
         placeNameQuery.addValueEventListener(new ValueEventListener() {
@@ -377,7 +386,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         airportPlaces = new LatLng[names.length];
         //LatLng[] airportPlaces = new LatLng[points.length];
 
-        for (int i=0;i<points.length;i++){
+        for (int i=0;i<points.length-1;i++){
+            System.out.println("LOOP START");
             points2[i]=points[i].split(",");
             String x = points2[i][0].replace("(", "");
             x = x.replace(")", "");
@@ -415,6 +425,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             }
 
+            //move map camera
+            mMap.moveCamera(CameraUpdateFactory.newLatLng(airportPlaces[i]));
+            mMap.animateCamera(CameraUpdateFactory.zoomTo(11));
+
             //Load image from Firebase into our infoWindow
             // Reference to an image file in Firebase Storage
             storage = FirebaseStorage.getInstance();
@@ -432,6 +446,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
+    public void  switchToAccountPage(){
+        Intent myIntent = new Intent(this, AccountActivity.class);
+        startActivity(myIntent);
+    }
 
     protected synchronized void buildGoogleApiClient() {
         mGoogleApiClient = new GoogleApiClient.Builder(this)
