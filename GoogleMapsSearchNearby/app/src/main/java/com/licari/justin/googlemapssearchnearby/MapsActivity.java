@@ -372,6 +372,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             descriptions[i] = description;
             types[i] = type;
 
+            names[i] = names[i].replace("=", "");
+            names[i] = names[i].replace("}", "");
+
+            descriptions[i] = descriptions[i].replace("=", "");
+            descriptions[i] = descriptions[i].replace("}", "");
+
+            types[i] = types[i].replace("=", "");
+            types[i] = types[i].replace("}", "");
+            types[i] = types[i].replace(" ", "");
+
             System.out.println("name: " + names[i]);
             System.out.println("description: " + descriptions[i]);
             System.out.println("type: " + types[i]);
@@ -391,23 +401,33 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             points2[i]=points[i].split(",");
             String x = points2[i][0].replace("(", "");
             x = x.replace(")", "");
+            x = x.replace("HDL=undefined", "");
             String y = points2[i][1].replace("(", "");
             y = y.replace(")", "");
-            System.out.println("x: " + x + " y: " + y);
+            System.out.println("x: " + x + " y: " + y + " type: " + types[i]);
 
-            if (types[i]=="washroom") {
+            if (types[i].indexOf("wash")!=-1) {
                 airportPlaces[i] = new LatLng(Double.parseDouble(x), Double.parseDouble(y));
                 mMap.addMarker(new MarkerOptions().position(airportPlaces[i])
                         .title(names[i])
                         .snippet(types[i] + "\n" + descriptions[i])
                         .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA)));
 
-            } else if (types[i]=="food & drink") {
+                //move map camera
+                mMap.moveCamera(CameraUpdateFactory.newLatLng(airportPlaces[i]));
+                mMap.animateCamera(CameraUpdateFactory.zoomTo(22));
+
+            } else if (types[i].indexOf("Food")!=-1) {
+                System.out.println("FOOD");
                 airportPlaces[i] = new LatLng(Double.parseDouble(x), Double.parseDouble(y));
                 mMap.addMarker(new MarkerOptions().position(airportPlaces[i])
                         .title(names[i])
                         .snippet(types[i] + "\n" + descriptions[i])
                         .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)));
+
+                //move map camera
+                mMap.moveCamera(CameraUpdateFactory.newLatLng(airportPlaces[i]));
+                mMap.animateCamera(CameraUpdateFactory.zoomTo(22));
 
             } else if (types[i]=="shops") {
                 airportPlaces[i] = new LatLng(Double.parseDouble(x), Double.parseDouble(y));
@@ -416,6 +436,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         .snippet(types[i] + "\n" + descriptions[i])
                         .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW)));
 
+                //move map camera
+                mMap.moveCamera(CameraUpdateFactory.newLatLng(airportPlaces[i]));
+                mMap.animateCamera(CameraUpdateFactory.zoomTo(22));
+
             } else if (types[i]=="escalators") {
                 airportPlaces[i] = new LatLng(Double.parseDouble(x), Double.parseDouble(y));
                 mMap.addMarker(new MarkerOptions().position(airportPlaces[i])
@@ -423,15 +447,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         .snippet(types[i] + "\n" + descriptions[i])
                         .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
 
+                //move map camera
+                mMap.moveCamera(CameraUpdateFactory.newLatLng(airportPlaces[i]));
+                mMap.animateCamera(CameraUpdateFactory.zoomTo(22));
             }
 
             //move map camera
-            mMap.moveCamera(CameraUpdateFactory.newLatLng(airportPlaces[i]));
-            mMap.animateCamera(CameraUpdateFactory.zoomTo(11));
+            //mMap.moveCamera(CameraUpdateFactory.newLatLng(airportPlaces[i]));
+            //mMap.animateCamera(CameraUpdateFactory.zoomTo(11));
 
             //Load image from Firebase into our infoWindow
             // Reference to an image file in Firebase Storage
-            storage = FirebaseStorage.getInstance();
+            /*storage = FirebaseStorage.getInstance();
             storageReference = storage.getReference();
             StorageReference ref = storageReference.child("/0.png");
 
@@ -442,7 +469,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             Glide.with(this)
                     .using(new FirebaseImageLoader())
                     .load(ref)
-                    .into(imageView);
+                    .into(imageView);*/
         }
     }
 
@@ -604,6 +631,22 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         {
             //handle click here
         }*/
+
+        //Load image from Firebase into our infoWindow
+        // Reference to an image file in Firebase Storage
+        storage = FirebaseStorage.getInstance();
+        storageReference = storage.getReference();
+        StorageReference ref = storageReference.child("/images/" + GlobalData.airport + marker.getTitle() + "/" + "image.gif");
+
+        // ImageView in your Activity
+        ImageView imageView = findViewById(R.id.photo);
+
+        // Load the image using Glide
+        Glide.with(this)
+                .using(new FirebaseImageLoader())
+                .load(ref)
+                .into(imageView);
+
         infoWindowContents.setDisplayedChild(infoWindowContents.indexOfChild(findViewById(R.id.placeDetails)));
 
         marker.showInfoWindow();
