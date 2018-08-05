@@ -61,6 +61,8 @@ public class MainActivity extends FragmentActivity {
                 // Successfully signed in
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
+                GlobalData.username = user.getDisplayName();
+
                 Intent myIntent = new Intent(this, AccountActivity.class);
                 startActivity(myIntent);
             } else {

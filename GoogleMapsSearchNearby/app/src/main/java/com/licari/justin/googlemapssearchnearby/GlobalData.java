@@ -7,4 +7,5 @@ package com.licari.justin.googlemapssearchnearby;
 public class GlobalData {
     //Represents the user's airport
     public static String airport = "";
+    public static String username = "";
 }

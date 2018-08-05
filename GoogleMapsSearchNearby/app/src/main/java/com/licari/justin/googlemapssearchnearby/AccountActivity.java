@@ -15,6 +15,7 @@ import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.IdpResponse;
@@ -32,10 +33,16 @@ import java.util.List;
  */
 
 public class AccountActivity extends FragmentActivity {
+
+    TextView displayMessageWindow;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_account);
+
+        displayMessageWindow = (TextView)findViewById(R.id.welcomeMessage);
+        displayMessageWindow.setText("Hello, " + GlobalData.username);
 
         Button btnAccount = (Button) findViewById(R.id.btnMap);
         btnAccount.setOnClickListener(new View.OnClickListener() {

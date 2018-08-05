@@ -26,6 +26,7 @@ import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -189,7 +190,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         });*/
 
-        Button btnSchool = (Button) findViewById(R.id.btnSchool);
+        /*Button btnSchool = (Button) findViewById(R.id.btnSchool);
         btnSchool.setOnClickListener(new View.OnClickListener() {
             String School = "school";
             @Override
@@ -198,7 +199,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 mMap.clear();
                 if (mCurrLocationMarker != null) {
                     mCurrLocationMarker.remove();
-                }
+                }*/
                /* String url = getUrl(latitude, longitude, School);
                 Object[] DataTransfer = new Object[2];
                 DataTransfer[0] = mMap;
@@ -206,15 +207,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 Log.d("onClick", url);
                 GetNearbyPlacesData getNearbyPlacesData = new GetNearbyPlacesData();
                 getNearbyPlacesData.execute(DataTransfer);*/
-                LatLng sydney = new LatLng(-33.852, 151.211);
+                /*LatLng sydney = new LatLng(-33.852, 151.211);
                 mMap.addMarker(new MarkerOptions().position(sydney)
                         .title("Marker in Sydney"));
                 mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
                 Toast.makeText(MapsActivity.this,"Nearby Schools", Toast.LENGTH_LONG).show();
             }
-        });
+        });*/
 
-        Button btnAccount = (Button) findViewById(R.id.btnAccount);
+        ImageButton btnAccount = (ImageButton) findViewById(R.id.btnAccount);
         btnAccount.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -247,7 +248,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         ref = database.getReference("airports/" + GlobalData.airport + "/maps/");
 
-        Query placeNameQuery = ref.child("markerNameData").orderByValue();
+        Query placeNameQuery = ref.child("markerNameData").orderByKey();
         placeNameQuery.addValueEventListener(new ValueEventListener() {
 
             @Override
@@ -263,7 +264,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         });
 
-        Query placeDescriptionQuery = ref.child("markerNotesData").orderByValue();
+        Query placeDescriptionQuery = ref.child("markerNotesData").orderByKey();
         placeDescriptionQuery.addValueEventListener(new ValueEventListener() {
 
             @Override
@@ -279,7 +280,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         });
 
-        Query placeTypeQuery = ref.child("markerDescriptionData").orderByValue();
+        Query placeTypeQuery = ref.child("markerDescriptionData").orderByKey();
         placeTypeQuery.addValueEventListener(new ValueEventListener() {
 
             @Override
@@ -411,11 +412,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 mMap.addMarker(new MarkerOptions().position(airportPlaces[i])
                         .title(names[i])
                         .snippet(types[i] + "\n" + descriptions[i])
-                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA)));
+                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)));
 
                 //move map camera
                 mMap.moveCamera(CameraUpdateFactory.newLatLng(airportPlaces[i]));
-                mMap.animateCamera(CameraUpdateFactory.zoomTo(22));
+                mMap.animateCamera(CameraUpdateFactory.zoomTo(16));
 
             } else if (types[i].indexOf("Food")!=-1) {
                 System.out.println("FOOD");
@@ -423,11 +424,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 mMap.addMarker(new MarkerOptions().position(airportPlaces[i])
                         .title(names[i])
                         .snippet(types[i] + "\n" + descriptions[i])
-                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)));
+                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA)));
 
                 //move map camera
                 mMap.moveCamera(CameraUpdateFactory.newLatLng(airportPlaces[i]));
-                mMap.animateCamera(CameraUpdateFactory.zoomTo(22));
+                mMap.animateCamera(CameraUpdateFactory.zoomTo(16));
 
             } else if (types[i]=="shops") {
                 airportPlaces[i] = new LatLng(Double.parseDouble(x), Double.parseDouble(y));
@@ -438,7 +439,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                 //move map camera
                 mMap.moveCamera(CameraUpdateFactory.newLatLng(airportPlaces[i]));
-                mMap.animateCamera(CameraUpdateFactory.zoomTo(22));
+                mMap.animateCamera(CameraUpdateFactory.zoomTo(16));
 
             } else if (types[i]=="escalators") {
                 airportPlaces[i] = new LatLng(Double.parseDouble(x), Double.parseDouble(y));
@@ -449,7 +450,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                 //move map camera
                 mMap.moveCamera(CameraUpdateFactory.newLatLng(airportPlaces[i]));
-                mMap.animateCamera(CameraUpdateFactory.zoomTo(22));
+                mMap.animateCamera(CameraUpdateFactory.zoomTo(16));
             }
 
             //move map camera
@@ -533,7 +534,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         MarkerOptions markerOptions = new MarkerOptions();
         markerOptions.position(latLng);
         markerOptions.title("Current Position");
-        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
+        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
         mCurrLocationMarker = mMap.addMarker(markerOptions);
 
         //move map camera
@@ -627,38 +628,43 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public boolean onMarkerClick(final Marker marker) {
 
-        /*if (marker.equals(myMarker))
-        {
-            //handle click here
-        }*/
 
-        //Load image from Firebase into our infoWindow
-        // Reference to an image file in Firebase Storage
-        storage = FirebaseStorage.getInstance();
-        storageReference = storage.getReference();
-        StorageReference ref = storageReference.child("/images/" + GlobalData.airport + marker.getTitle() + "/" + "image.gif");
+        String markerTitle= marker.getTitle();
+        System.out.println("title: " + markerTitle);
 
-        // ImageView in your Activity
-        ImageView imageView = findViewById(R.id.photo);
+        if (markerTitle!="Current Position") {
 
-        // Load the image using Glide
-        Glide.with(this)
-                .using(new FirebaseImageLoader())
-                .load(ref)
-                .into(imageView);
 
-        infoWindowContents.setDisplayedChild(infoWindowContents.indexOfChild(findViewById(R.id.placeDetails)));
+            //Load image from Firebase into our infoWindow
+            // Reference to an image file in Firebase Storage
+            storage = FirebaseStorage.getInstance();
+            storageReference = storage.getReference();
+            StorageReference ref = storageReference.child("/images/" + GlobalData.airport + marker.getTitle() + "/" + "image.jpg");
 
-        marker.showInfoWindow();
+            // ImageView in your Activity
+            ImageView imageView = findViewById(R.id.photo);
 
-        /*infoWindowType = (TextView)findViewById(R.id.type);
-        infoWindowType.setText("Type: " + "My Awesome Text");
+            // Load the image using Glide
+            Glide.with(this)
+                    .using(new FirebaseImageLoader())
+                    .load(ref)
+                    .into(imageView);
 
-        infoWindowDescription = (TextView)findViewById(R.id.description);
-        infoWindowDescription.setText("\n" + "Description: " + "My Awesome Text ");*/
+            infoWindowContents.setDisplayedChild(infoWindowContents.indexOfChild(findViewById(R.id.placeDetails)));
 
-        System.out.println(marker.getTitle() + "_" + marker.getId() + "_" + marker.getZIndex());
-        return true;
+            marker.showInfoWindow();
+
+            /*infoWindowType = (TextView)findViewById(R.id.type);
+            infoWindowType.setText("Type: " + "My Awesome Text");*/
+
+            infoWindowDescription = (TextView) findViewById(R.id.description);
+            infoWindowDescription.setText("\n" + "Description: " + marker.getSnippet());
+
+            System.out.println(marker.getTitle() + "_" + marker.getId() + "_" + marker.getZIndex());
+            return true;
+        }
+
+        return false;
     }
 }
 
