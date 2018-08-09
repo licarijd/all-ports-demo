@@ -49,6 +49,8 @@ import com.google.firebase.storage.StorageReference;
 
 import org.w3c.dom.Text;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback,
@@ -57,9 +59,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         GoogleApiClient.OnConnectionFailedListener,
         LocationListener {
 
-    public static String pointNames;
-    public static String pointDescriptions;
-    public static String pointTypes;
+    List<String> pointNames = new ArrayList();
+    List<String> pointDescriptions = new ArrayList();
+    List<String> pointTypes = new ArrayList();
     public static String pointCoordinates;
     public static LatLng[] airportPlaces;
 
@@ -246,16 +248,26 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         });
 
 
-        ref = database.getReference("airports/" + GlobalData.airport + "/maps/");
+        ref = database.getReference("airports/" + GlobalData.airport + "/maps/markerNameData");
 
-        Query placeNameQuery = ref.child("markerNameData").orderByKey();
-        placeNameQuery.addValueEventListener(new ValueEventListener() {
+        // Attach a listener to read the data
+        ref.addValueEventListener(new ValueEventListener() {
 
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                String data = dataSnapshot.getValue().toString();
-                setPointNames(data);
-                //System.out.println("names: " + data);
+                for (DataSnapshot child : dataSnapshot.getChildren()) {
+                    pointNames.add(child.getValue().toString());
+                }
+
+                for (int i=0;i<pointNames.size();i++){
+
+                    System.out.println("name: " + pointNames.get(i));
+                }
+
+                if (pointDescriptions.size()>0 && pointCoordinates!=null && pointNames.size()>0 && pointTypes.size()>0){
+                    setAirportData();
+                    System.out.print("data set ");
+                }
             }
 
             @Override
@@ -264,14 +276,26 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         });
 
-        Query placeDescriptionQuery = ref.child("markerNotesData").orderByKey();
-        placeDescriptionQuery.addValueEventListener(new ValueEventListener() {
 
+        ref = database.getReference("airports/" + GlobalData.airport + "/maps/markerNotesData");
+
+        // Attach a listener to read the data
+        ref.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                String data = dataSnapshot.getValue().toString();
-                setPointDescriptions(data);
-                //System.out.println("descriptions: " + data);
+                for (DataSnapshot child : dataSnapshot.getChildren()) {
+                    pointDescriptions.add(child.getValue().toString());
+                }
+
+                for (int i=0;i<pointDescriptions.size();i++){
+
+                    System.out.println("desc: " + pointDescriptions.get(i));
+                }
+
+                if (pointDescriptions.size()>0 && pointCoordinates!=null && pointNames.size()>0 && pointTypes.size()>0){
+                    setAirportData();
+                    System.out.print("data set ");
+                }
             }
 
             @Override
@@ -280,14 +304,26 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         });
 
-        Query placeTypeQuery = ref.child("markerDescriptionData").orderByKey();
-        placeTypeQuery.addValueEventListener(new ValueEventListener() {
 
+        ref = database.getReference("airports/" + GlobalData.airport + "/maps/markerDescriptionData");
+
+        // Attach a listener to read the data
+        ref.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                String data = dataSnapshot.getValue().toString();
-                setPointTypes(data);
-                //System.out.println("types: " + data);
+                for (DataSnapshot child : dataSnapshot.getChildren()) {
+                    pointTypes.add(child.getValue().toString());
+                }
+
+                for (int i=0;i<pointTypes.size();i++){
+
+                    System.out.println("type: " + pointTypes.get(i));
+                }
+
+                if (pointDescriptions.size()>0 && pointCoordinates!=null && pointNames.size()>0 && pointTypes.size()>0){
+                    setAirportData();
+                    System.out.print("data set ");
+                }
             }
 
             @Override
@@ -295,6 +331,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 System.out.println("The read failed: " + databaseError.getCode());
             }
         });
+
 
        /* new java.util.Timer().schedule(
                 new java.util.TimerTask() {
@@ -312,13 +349,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         pointCoordinates = data;
         System.out.print("coordinates: " + pointCoordinates);
 
-        if (pointDescriptions!=null && pointCoordinates!=null && pointNames!=null && pointTypes!=null){
+        if (pointDescriptions.size()>0 && pointCoordinates!=null && pointNames.size()>0 && pointTypes.size()>0){
             setAirportData();
             System.out.print("data set ");
         }
     }
 
-    public void setPointNames(String data){
+    /*public void setPointNames(String data){
         pointNames = data;
         System.out.print("names: " + pointNames);
 
@@ -326,9 +363,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             setAirportData();
             System.out.print("data set ");
         }
-    }
+    }*/
 
-    public void setPointDescriptions(String data){
+    /*public void setPointDescriptions(String data){
         pointDescriptions = data;
         System.out.print("descriptions: " + pointDescriptions);
 
@@ -336,9 +373,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             setAirportData();
             System.out.print("data set ");
         }
-    }
+    }*/
 
-    public void setPointTypes(String data){
+    /*public void setPointTypes(String data){
         pointTypes = data;
         System.out.print("types: " + pointTypes);
 
@@ -346,7 +383,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             setAirportData();
             System.out.print("data set ");
         }
-    }
+    }*/
 
     private void setAirportData(){
 
@@ -355,11 +392,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             System.out.println("waiting for airport data...");
         }*/
 
-        System.out.println("names: " + pointNames);
-        System.out.println("descriptions: " + pointDescriptions);
+        //System.out.println("names: " + pointNames);
+        /*System.out.println("descriptions: " + pointDescriptions);
         System.out.println("types: " + pointTypes);
 
-        String[] names = pointNames.split(",");
+        String[] names = pointNames.get(0).split("=");
         String[] descriptions = pointDescriptions.split(",");
         String[] types = pointTypes.split(",");
 
@@ -386,7 +423,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             System.out.println("name: " + names[i]);
             System.out.println("description: " + descriptions[i]);
             System.out.println("type: " + types[i]);
-        }
+        }*/
 
         System.out.println("data: " + pointCoordinates);
 
@@ -394,10 +431,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         String s2 = s1.substring(9);
         String[] points = s2.split("#");
         String[][] points2 = new String[points.length][2];
-        airportPlaces = new LatLng[names.length];
-        //LatLng[] airportPlaces = new LatLng[points.length];
+
+
+        airportPlaces = new LatLng[pointNames.size()];
 
         for (int i=0;i<points.length-1;i++){
+
             System.out.println("LOOP START");
             points2[i]=points[i].split(",");
             String x = points2[i][0].replace("(", "");
@@ -405,47 +444,47 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             x = x.replace("HDL=undefined", "");
             String y = points2[i][1].replace("(", "");
             y = y.replace(")", "");
-            System.out.println("x: " + x + " y: " + y + " type: " + types[i]);
+            System.out.println("x: " + x + " y: " + y + " type: " + pointTypes.get(i));
 
-            if (types[i].indexOf("wash")!=-1) {
+            if (pointTypes.get(i).indexOf("wash")!=-1) {
                 airportPlaces[i] = new LatLng(Double.parseDouble(x), Double.parseDouble(y));
                 mMap.addMarker(new MarkerOptions().position(airportPlaces[i])
-                        .title(names[i])
-                        .snippet(types[i] + "\n" + descriptions[i])
+                        .title(pointNames.get(i))
+                        .snippet(pointTypes.get(i) + "\n" + pointDescriptions.get(i))
                         .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)));
 
                 //move map camera
                 mMap.moveCamera(CameraUpdateFactory.newLatLng(airportPlaces[i]));
                 mMap.animateCamera(CameraUpdateFactory.zoomTo(16));
 
-            } else if (types[i].indexOf("Food")!=-1) {
+            } else if (pointTypes.get(i).indexOf("Food")!=-1) {
                 System.out.println("FOOD");
                 airportPlaces[i] = new LatLng(Double.parseDouble(x), Double.parseDouble(y));
                 mMap.addMarker(new MarkerOptions().position(airportPlaces[i])
-                        .title(names[i])
-                        .snippet(types[i] + "\n" + descriptions[i])
+                        .title(pointNames.get(i))
+                        .snippet(pointTypes.get(i) + "\n" + pointDescriptions.get(i))
                         .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA)));
 
                 //move map camera
                 mMap.moveCamera(CameraUpdateFactory.newLatLng(airportPlaces[i]));
                 mMap.animateCamera(CameraUpdateFactory.zoomTo(16));
 
-            } else if (types[i]=="shops") {
+            } else if (pointTypes.get(i)=="shops") {
                 airportPlaces[i] = new LatLng(Double.parseDouble(x), Double.parseDouble(y));
                 mMap.addMarker(new MarkerOptions().position(airportPlaces[i])
-                        .title(names[i])
-                        .snippet(types[i] + "\n" + descriptions[i])
+                        .title(pointNames.get(i))
+                        .snippet(pointTypes.get(i) + "\n" + pointDescriptions.get(i))
                         .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW)));
 
                 //move map camera
                 mMap.moveCamera(CameraUpdateFactory.newLatLng(airportPlaces[i]));
                 mMap.animateCamera(CameraUpdateFactory.zoomTo(16));
 
-            } else if (types[i]=="escalators") {
+            } else if (pointTypes.get(i)=="escalators") {
                 airportPlaces[i] = new LatLng(Double.parseDouble(x), Double.parseDouble(y));
                 mMap.addMarker(new MarkerOptions().position(airportPlaces[i])
-                        .title(names[i])
-                        .snippet(types[i] + "\n" + descriptions[i])
+                        .title(pointNames.get(i))
+                        .snippet(pointTypes.get(i) + "\n" + pointDescriptions.get(i))
                         .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
 
                 //move map camera
