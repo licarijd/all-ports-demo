@@ -292,6 +292,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     System.out.println("desc: " + pointDescriptions.get(i));
                 }
 
+                //Once all data is loaded, plot it
                 if (pointDescriptions.size()>0 && pointCoordinates!=null && pointNames.size()>0 && pointTypes.size()>0){
                     setAirportData();
                     System.out.print("data set ");
@@ -320,6 +321,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     System.out.println("type: " + pointTypes.get(i));
                 }
 
+                //Once all data is loaded, plot it
                 if (pointDescriptions.size()>0 && pointCoordinates!=null && pointNames.size()>0 && pointTypes.size()>0){
                     setAirportData();
                     System.out.print("data set ");
@@ -349,6 +351,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         pointCoordinates = data;
         System.out.print("coordinates: " + pointCoordinates);
 
+        //Once all data is loaded, plot it
         if (pointDescriptions.size()>0 && pointCoordinates!=null && pointNames.size()>0 && pointTypes.size()>0){
             setAirportData();
             System.out.print("data set ");
@@ -671,7 +674,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         String markerTitle= marker.getTitle();
         System.out.println("title: " + markerTitle);
 
-        if (markerTitle!="Current Position") {
+        if (markerTitle.indexOf("Position")==-1) {
 
 
             //Load image from Firebase into our infoWindow
