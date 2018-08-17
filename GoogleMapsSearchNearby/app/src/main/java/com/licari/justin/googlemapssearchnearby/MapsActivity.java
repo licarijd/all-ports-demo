@@ -1,6 +1,10 @@
 package com.licari.justin.googlemapssearchnearby;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 
@@ -22,6 +26,8 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Build;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.View;
@@ -62,12 +68,23 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     List<String> pointNames = new ArrayList();
     List<String> pointDescriptions = new ArrayList();
     List<String> pointTypes = new ArrayList();
+    List<LatLng> nearestPlaces = new ArrayList();
+    List<MarkerOptions> nearestPlacesMarkers = new ArrayList();
+    List<MarkerOptions> placeMarkers = new ArrayList();
     public static String pointCoordinates;
     public static LatLng[] airportPlaces;
+
+    TextView nearestPlacesList;
 
     //Firebase
     FirebaseStorage storage;
     StorageReference storageReference;
+
+    //Represents whether the info panel is displayed or not
+    public boolean infoWindowVisible = true;
+
+    //Represents if places are within 40m of a user.
+    public boolean placesNearby = false;
 
     private GoogleMap mMap;
     double latitude;
@@ -80,6 +97,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     ViewFlipper infoWindowContents;
     TextView infoWindowDescription;
+    TextView toggleButtonState;
     TextView infoWindowType;
 
     private Marker myMarker;
@@ -222,6 +240,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             @Override
             public void onClick(View v) {
                 switchToAccountPage();
+            }
+        });
+
+        Button btnCloseView = (Button) findViewById(R.id.btnHide);
+        btnCloseView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                toggleInfoPanel();
             }
         });
 
@@ -430,7 +456,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         System.out.println("data: " + pointCoordinates);
 
+        //Find "undefined" String in coordinate data, and remove it
         String s1 = pointCoordinates.substring(pointCoordinates.indexOf("u")+1);
+
+        System.out.println(s1 + s1.charAt(1) + " " + s1.charAt(2) + " " + s1.charAt(3) + " " + s1.charAt(4) + " " + s1.charAt(5) + " ");
+
+        while (!((s1.charAt(0)=='n') && (s1.charAt(1)=='d') && (s1.charAt(2)=='e') && (s1.charAt(3)=='f') && (s1.charAt(4)=='i'))){
+            s1 = s1.substring(s1.indexOf("u")+1);
+            System.out.println(s1.charAt(0) + " " + s1.charAt(1) + " " + s1.charAt(2) + " " + s1.charAt(3) + " " + s1.charAt(4) + " ");
+        }
+
         String s2 = s1.substring(9);
         String[] points = s2.split("#");
         String[][] points2 = new String[points.length][2];
@@ -451,10 +486,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             if (pointTypes.get(i).indexOf("wash")!=-1) {
                 airportPlaces[i] = new LatLng(Double.parseDouble(x), Double.parseDouble(y));
-                mMap.addMarker(new MarkerOptions().position(airportPlaces[i])
+
+                MarkerOptions place = new MarkerOptions().position(airportPlaces[i])
                         .title(pointNames.get(i))
                         .snippet(pointTypes.get(i) + "\n" + pointDescriptions.get(i))
-                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)));
+                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
+
+                mMap.addMarker(place);
+                placeMarkers.add(place);
 
                 //move map camera
                 mMap.moveCamera(CameraUpdateFactory.newLatLng(airportPlaces[i]));
@@ -463,32 +502,44 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             } else if (pointTypes.get(i).indexOf("Food")!=-1) {
                 System.out.println("FOOD");
                 airportPlaces[i] = new LatLng(Double.parseDouble(x), Double.parseDouble(y));
-                mMap.addMarker(new MarkerOptions().position(airportPlaces[i])
+
+                MarkerOptions place = new MarkerOptions().position(airportPlaces[i])
                         .title(pointNames.get(i))
                         .snippet(pointTypes.get(i) + "\n" + pointDescriptions.get(i))
-                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA)));
+                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
+
+                mMap.addMarker(place);
+                placeMarkers.add(place);
 
                 //move map camera
                 mMap.moveCamera(CameraUpdateFactory.newLatLng(airportPlaces[i]));
                 mMap.animateCamera(CameraUpdateFactory.zoomTo(16));
 
-            } else if (pointTypes.get(i)=="shops") {
+            } else if (pointTypes.get(i).indexOf("Shop")!=-1) {
                 airportPlaces[i] = new LatLng(Double.parseDouble(x), Double.parseDouble(y));
-                mMap.addMarker(new MarkerOptions().position(airportPlaces[i])
+
+                MarkerOptions place = new MarkerOptions().position(airportPlaces[i])
                         .title(pointNames.get(i))
                         .snippet(pointTypes.get(i) + "\n" + pointDescriptions.get(i))
-                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW)));
+                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW));
+
+                mMap.addMarker(place);
+                placeMarkers.add(place);
 
                 //move map camera
                 mMap.moveCamera(CameraUpdateFactory.newLatLng(airportPlaces[i]));
                 mMap.animateCamera(CameraUpdateFactory.zoomTo(16));
 
-            } else if (pointTypes.get(i)=="escalators") {
+            } else if (pointTypes.get(i).indexOf("Escalator")!=-1) {
                 airportPlaces[i] = new LatLng(Double.parseDouble(x), Double.parseDouble(y));
-                mMap.addMarker(new MarkerOptions().position(airportPlaces[i])
+
+                MarkerOptions place = new MarkerOptions().position(airportPlaces[i])
                         .title(pointNames.get(i))
                         .snippet(pointTypes.get(i) + "\n" + pointDescriptions.get(i))
-                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
+                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
+
+                mMap.addMarker(place);
+                placeMarkers.add(place);
 
                 //move map camera
                 mMap.moveCamera(CameraUpdateFactory.newLatLng(airportPlaces[i]));
@@ -519,6 +570,20 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void  switchToAccountPage(){
         Intent myIntent = new Intent(this, AccountActivity.class);
         startActivity(myIntent);
+    }
+
+    public void  toggleInfoPanel(){
+        toggleButtonState = (TextView) findViewById(R.id.btnHide);
+
+        if (infoWindowVisible){
+            infoWindowContents.setDisplayedChild(0);//(infoWindowContents.indexOfChild(findViewById(R.id.placeDetails)));
+            toggleButtonState.setText("Legend");
+            infoWindowVisible = false;
+        } else {
+            infoWindowContents.setDisplayedChild(3);//(infoWindowContents.indexOfChild(findViewById(R.id.placeDetails)));
+            toggleButtonState.setText("Close");
+            infoWindowVisible = true;
+        }
     }
 
     protected synchronized void buildGoogleApiClient() {
@@ -578,6 +643,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         markerOptions.title("Current Position");
         markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
         mCurrLocationMarker = mMap.addMarker(markerOptions);
+
+        updateNearestPlaces(latLng);
 
         //move map camera
        // mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
@@ -670,7 +737,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public boolean onMarkerClick(final Marker marker) {
 
-
         String markerTitle= marker.getTitle();
         System.out.println("title: " + markerTitle);
 
@@ -704,9 +770,75 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             System.out.println(marker.getTitle() + "_" + marker.getId() + "_" + marker.getZIndex());
             return true;
+        } else {
+            if (placesNearby) {
+                System.out.println("nearest places");
+                infoWindowContents.setDisplayedChild(2);
+            }
         }
 
         return false;
+    }
+
+    public void updateNearestPlaces(LatLng position){
+        for (int i=0;i<airportPlaces.length;i++){
+            double distance = Math.hypot(position.latitude-airportPlaces[i].latitude, position.longitude-airportPlaces[i].longitude);
+
+            System.out.println("distance from place " + i + ": " + distance);
+
+            if (nearestPlaces.size()<5 && distance<40.0) {
+                placesNearby = true;
+                nearestPlaces.add(airportPlaces[i]);
+                nearestPlacesMarkers.add(placeMarkers.get(i));
+            }
+
+            if (distance<5.0){
+                System.out.println("You've arrived");
+                NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this, "test")
+                        .setSmallIcon(R.drawable.map)
+                        .setContentTitle("You've arrived at " + placeMarkers.get(i).getTitle())
+                        .setContentText("You are now at " + placeMarkers.get(i).getTitle())
+                        .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+
+                // Create an explicit intent for an Activity in your app
+                Intent intent = new Intent(this, /*AlertDetails.class*/MapsActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
+
+
+                createNotificationChannel();
+
+                NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
+
+                // notificationId is a unique int for each notification that you must define
+                notificationManager.notify(/*notificationId*/0, mBuilder.build());
+            }
+        }
+
+        String nearestPlacesListString = "Places Near You: " + "\n";
+
+        for (int i=0;i<nearestPlaces.size();i++){
+            nearestPlacesListString += i+1 +": " + nearestPlacesMarkers.get(i).getTitle() + "\n";
+        }
+
+        nearestPlacesList = (TextView)findViewById(R.id.placesList);
+        nearestPlacesList.setText(nearestPlacesListString);
+    }
+
+    private void createNotificationChannel() {
+        // Create the NotificationChannel, but only on API 26+ because
+        // the NotificationChannel class is new and not in the support library
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence name = /*getString(R.string.channel_name*/"test"/*)*/;
+            String description = /*getString(R.string.channel_description)*/"test";
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            NotificationChannel channel = new NotificationChannel(/*CHANNEL_ID*/"test", name, importance);
+            channel.setDescription(description);
+            // Register the channel with the system; you can't change the importance
+            // or other notification behaviors after this
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
     }
 }
 
